@@ -26,9 +26,9 @@ public class Box {
 				partiArr[i] = p;
 				i++;
 			}
-			else {
-				System.out.println(collisionChecker(p,i));
-			}
+			//else {
+			//	System.out.println(collisionChecker(p,i));
+			//}
 		}
 	}
 
@@ -110,23 +110,33 @@ public class Box {
 		return collisions;
 	}
 
-	/**moves a random particle in a random direction by a random distance between 0 and maxDist
- *	@param maxDist double, the maximum distance to move for a movement in each dimension */
-	public void move(double maxDist) {
+	/**moves a random particle in partiArr in a random direction by a random distance between 0 and maxDist
+ *	@param maxDist double, the maximum distance to move for a movement in each dimension 
+ *	@return Movement, the Movement that occured */
+	
+	public Movement move(double maxDist) {
 		//randomly choose a particle to move
 		int ind = (int) Math.floor(getRandomNumberInRange(0.0,(double)n));
 		Particle thisParti = partiArr[ind];
-		//get the coordinates of the chosen particle
-		double x = thisParti.getx();
-		double y = thisParti.gety();
-		double z = thisParti.getz();
 		//randomly choose distances to move in x, y, z respectively
 		double distX = getRandomNumberInRange(0,maxDist);
 		double distY = getRandomNumberInRange(0,maxDist);
 		double distZ = getRandomNumberInRange(0,maxDist);
-		thisParti.setX(positiveModulo(x + distX,d));
-		thisParti.setY(positiveModulo(y + distY,d));
-		thisParti.setZ(positiveModulo(z + distZ,d));
+		Movement m = new Movement(thisParti, distX, distY, distZ);
+		move(m);
+		return m;
+	}
+
+	/**moves a Particle with a Movement
+ * 	@param m, the Movement */
+	public void move(Movement m) {
+		Particle p = m.getParticle();
+		double x = p.getx();
+		double y = p.gety();
+		double z = p.getz();
+		p.setX(positiveModulo(x + m.getDx(),d));
+		p.setY(positiveModulo(y + m.getDy(),d));
+		p.setZ(positiveModulo(z + m.getDz(),d));
 	}
 	
 

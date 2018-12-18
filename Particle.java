@@ -4,11 +4,11 @@ public class Particle {
         //data
 	private double x,y,z;
 	//the small particle for phi = 0.2
-	public static double diam = 0.0914156;
+	//public static double diam = 0.0914156;
 	//the large particle for phi = 0.45
 	//public static double diam = 0.11978836;
 	//ideal gas
-	//public static final double diam = 0.0;
+	public static final double diam = 0.0;
 
 	//constructor
         public Particle(double xx, double yy, double zz) {
