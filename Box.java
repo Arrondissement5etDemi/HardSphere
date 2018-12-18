@@ -6,7 +6,7 @@ public class Box {
 	private int n; //the number of particles
 	private static final double d = 1.0; //the dimension of the box
 	private Particle[] partiArr;
-	private static final int bound = 1; //the cutoff distance for calculating the energy at a particle
+	private static final int bound = 1; //the cutoff distance for calculating the collision of a particle
 	
 	/** constructs a box with randomized hard sphere distribution, with period boundary conditions
  * 	@param nGiven int, the given numer of particles
