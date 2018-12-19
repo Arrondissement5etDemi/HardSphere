@@ -2,19 +2,21 @@ import java.util.*;
 
 public class Particle {
         //data
-	private double x,y,z;
+	private double x,y,z;//coordinates of the spheres
+	private double diam;//diameter of the spheres
 	//the small particle for phi = 0.2
-	//public static double diam = 0.0914156;
+	//diam = 0.0914156;
 	//the large particle for phi = 0.45
-	//public static double diam = 0.11978836;
+	//diam = 0.11978836;
 	//ideal gas
-	public static final double diam = 0.0;
+	//diam = 0.0;
 
 	//constructor
         public Particle(double xx, double yy, double zz) {
 		x = xx;
                 y = yy;
 		z = zz;
+		diam =  0.0914156;
         }
 
         //gets the coordinates
@@ -28,6 +30,10 @@ public class Particle {
 
 	public double getz() {
 		return z;
+	}
+
+	public double getDiam() {
+		return diam;
 	}
 
 	//modifiers
