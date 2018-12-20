@@ -5,14 +5,16 @@ import java.util.*;
 public class Box {
 	private int n; //the number of particles
 	private static final double d = 1.0; //the dimension of the box
+	private double diam;//the diameter of the particles
 	private Particle[] partiArr;
 	private static final int bound = 1; //the cutoff distance for calculating the energy at a particle
 	
 	/** constructs a box with randomized hard sphere distribution, with period boundary conditions
  * 	@param nGiven int, the given numer of particles
  * 	@return Box, the constructed box */
-	public Box(int nGiven) {
+	public Box(int nGiven, double diamGiven) {
 		n = nGiven;
+		diam = diamGiven;
 		partiArr = new Particle[n];
 		int i = 0;
 		while (i < n) {
@@ -20,7 +22,7 @@ public class Box {
 			double x = getRandomNumberInRange(0,d);
 			double y = getRandomNumberInRange(0,d);
 			double z = getRandomNumberInRange(0,d);
-			Particle p = new Particle(x,y,z);	
+			Particle p = new Particle(x,y,z,diam);	
 			//check if the particle p collides with already generated particles
 			if (collisionChecker(p,i)==0) {	
 				partiArr[i] = p;
@@ -36,14 +38,18 @@ public class Box {
  *      @param nGiven int, the given numer of particles
  *      @param coordinates double[][] the predetermined particle positions
  *      @return Box, the constructed box */
-	public Box(int nGiven, double[][] coordinates) {
+	public Box(int nGiven, double diamGiven, double[][] coordinates) {
+		if (nGiven > coordinates.length) {
+			throw new  IllegalArgumentException("nGiven must be <= coordinates.length");
+		}
 		n = nGiven;
+		diam = diamGiven;
 		partiArr = new Particle[n];
 		for (int i = 0; i < n; i++) {
 			double x = coordinates[i][0];
 			double y = coordinates[i][1];
 			double z = coordinates[i][2];
-			Particle p = new Particle(x,y,z);
+			Particle p = new Particle(x,y,z,diamGiven);
 			partiArr[i] = p;
 		}
 	}
@@ -94,12 +100,13 @@ public class Box {
                         double thatX = thatParti.getx();
                         double thatY = thatParti.gety();
                         double thatZ = thatParti.getz();
+			double thatDiam = thatParti.getDiam();
 			//scan through the relavant cells...
 			for (int j = -bound; j <= bound; j++) {
 			          for (int k = -bound; k <= bound; k++) {
 					for (int l = -bound; l <= bound; l++) {
 						//duplicate thatParti in the scanned cell
-						Particle dupliOfThat = new Particle(thatX + j*d, thatY + k*d, thatZ + l*d);
+						Particle dupliOfThat = new Particle(thatX + j*d, thatY + k*d, thatZ + l*d,thatDiam);
 						if (thisParti.collide(dupliOfThat)) {
 							collisions++;
 						}
@@ -148,7 +155,7 @@ public class Box {
 			double x = partiArr[i].getx();
 			double y = partiArr[i].gety();
 			double z = partiArr[i].getz();
-			Particle pCopy = new Particle(x,y,z);
+			Particle pCopy = new Particle(x,y,z,diam);
 			partiArrCopy[i] = pCopy;
 		}
 		return partiArrCopy;

@@ -1,34 +1,33 @@
 import java.util.*;
 
+/**generates g2 for hard sphere system with packing fraction phi = 0.20 */
 public class HardSphereSmall {
 	public static void main(String[] args) {
 		//create a box with 500 particles
 		int n = 500;
 		double diam = 0.0914156;//for phi = 0.20
 		double[][] coordinates = cubeLattice(8,1.0);
-		Box pandora3D = new Box(n,diam,coordinates);
-		int collisionNow = pandora3D.totalCollision();		
+		double thickness = 0.0084;
+                System.out.println("thickness = " + thickness);
+                System.out.println("diam = " + diam);
 
-		for (int i = 1; i <= 100000; i++) {
+		Box pandora3D = new Box(n,diam,coordinates);
+		//int collisionNow = pandora3D.totalCollision();		
+
+		for (int i = 1; i <= 20000000; i++) {
 			Movement m = pandora3D.move(0.005);
 			Particle particleMoved = m.getParticle();
 			if (pandora3D.collisionChecker(particleMoved,n) > 1) {
 				pandora3D.move(m.reverse());
 			}
-			else {
-				collisionNow = pandora3D.totalCollision();
+			if (i%1000000 == 0) {//get the config and g2 every 1000000 moves	 
+				System.out.println(pandora3D);//this is the equil. config.
+                		double[][] g2 = RadialStat.g2Table(pandora3D,thickness);
+                		for (int j = 0; j < g2.length; j++) {
+                        		System.out.println(g2[j][0] + " " + g2[j][1]);
+                		}
 			}
-			//System.out.println(pandora3D.totalCollision()); 
 		}
-		System.out.println(pandora3D);//this is the equil. config.
-
-		double thickness = 0.010;
-		System.out.println("thickness = " + thickness);
-		System.out.println("diam = " + diam);
-                double[][] g2 = RadialStat.g2Table(pandora3D,thickness);
-                for (int i = 0; i < g2.length; i++) {
-                        System.out.println(g2[i][0] + " " + g2[i][1]);
-                }
 	
 	}	
 

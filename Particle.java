@@ -12,11 +12,11 @@ public class Particle {
 	//diam = 0.0;
 
 	//constructor
-        public Particle(double xx, double yy, double zz) {
+        public Particle(double xx, double yy, double zz, double diamGiven) {
 		x = xx;
                 y = yy;
 		z = zz;
-		diam =  0.0914156;
+		diam =  diamGiven;
         }
 
         //gets the coordinates

@@ -25,11 +25,12 @@ public class RadialStat {
 			double thatX = thatParti.getx();
 			double thatY = thatParti.gety();
 			double thatZ = thatParti.getz();
+			double thatDiam = thatParti.getDiam();
 			for (int j = -bound; j <= bound; j++) {
 				for (int k = -bound; k <= bound; k++) {
 					for (int l = -bound; l <= bound; l++) {
 						Particle dupli 
-						= new Particle(thatX + j*d, thatY + k*d, thatZ + l*d);
+						= new Particle(thatX + j*d, thatY + k*d, thatZ + l*d, thatDiam);
 						double distToDupli = center.distanceto(dupli);
 						if (distToDupli > lowerRad && distToDupli <= upperRad) {
 							count = count + 1;

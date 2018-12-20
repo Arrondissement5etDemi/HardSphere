@@ -6,28 +6,27 @@ public class HardSphereLarge {
 		int n = 500;
 		double diam = 0.11978836;//for phi = 0.45
 		double[][] coordinates = cubeLattice(8,1.0);
-		Box pandora3D = new Box(n,diam,coordinates);
-		int collisionNow = pandora3D.totalCollision();		
+		double thickness = 0.008;
+                System.out.println("thickness = " + thickness);
+                System.out.println("diam = " + diam);
 
-		for (int i = 1; i <= 100000; i++) {
+		Box pandora3D = new Box(n,diam,coordinates);
+		//int collisionNow = pandora3D.totalCollision();		
+
+		for (int i = 1; i <= 25000000; i++) {
 			Movement m = pandora3D.move(0.005);
 			Particle particleMoved = m.getParticle();
 			if (pandora3D.collisionChecker(particleMoved,n) > 1) {
 				pandora3D.move(m.reverse());
 			}
-			else {
-				collisionNow = pandora3D.totalCollision();
+			if (i%5000000 == 0) {//get the config and g2 every 1000000 moves	 
+				System.out.println(pandora3D);//this is the equil. config.
+                		double[][] g2 = RadialStat.g2Table(pandora3D,thickness);
+                		for (int j = 0; j < g2.length; j++) {
+                        		System.out.println(g2[j][0] + " " + g2[j][1]);
+                		}
 			}
-			//System.out.println(pandora3D.totalCollision()); 
 		}
-		System.out.println(pandora3D);//this is the equil. config.
-
-		double thickness = 0.008;
-		System.out.println("thickness = " + thickness);
-                double[][] g2 = RadialStat.g2Table(pandora3D,thickness);
-                for (int i = 0; i < g2.length; i++) {
-                        System.out.println(g2[i][0] + " " + g2[i][1]);
-                }
 	
 	}	
 
