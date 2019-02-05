@@ -2,24 +2,28 @@ import java.util.*;
 
 /**generates g2 for hard sphere system with packing fraction phi = 0.20 */
 public class HardSphereLarge {
+	
 	public static void main(String[] args) {
 		//create a box with 500 particles
 		int n = 500;
-		double diam = 0.11978836;//for phi = 0.45
+		double phi = 0.20;
+		double diam = Math.pow(6.0*phi/(Math.PI*(double)n),1.0/3.0);//for phi = 0.45
+		int numBinsPerDiam = 60;
+		double upperRad = 4.0;
+
 		double[][] coordinates = cubeLattice(8,1.0);
-		double thickness = diam/15;
-                System.out.println("thickness = " + thickness);
+                System.out.println("thickness = 1/"+numBinsPerDiam);
                 System.out.println("diam = " + diam);
 
 		Box pandora3D = new Box(n,diam,coordinates);
 		//int collisionNow = pandora3D.totalCollision();		
 
-		double[][] g2Final = RadialStat.g2Table(pandora3D,thickness);
+		double[][] g2Final = RadialStat.g2(pandora3D,numBinsPerDiam,upperRad);
 		for (int i = 0; i < g2Final.length; i++) {
 			g2Final[i][1] = 0.0;
 		}
 		int relaxTime =  100000;
-		int totalTime = 5000000;
+		int totalTime = 10000000;
 		int numSample = totalTime/relaxTime;
 
 		for (int i = 1; i <= totalTime; i++) {
@@ -29,8 +33,7 @@ public class HardSphereLarge {
 				pandora3D.move(m.reverse());
 			}
 			if (i%relaxTime == 0) {//sample the config and g2 after every relaxation
-				//System.out.println(pandora3D);//this is the equil. config.
-                		double[][] g2 = RadialStat.g2Table(pandora3D,thickness);
+                		double[][] g2 = RadialStat.g2(pandora3D,numBinsPerDiam,upperRad);
 				for (int j = 0; j < g2.length; j++) {
 					g2Final[j][1] = g2Final[j][1] + g2[j][1];
 				}
