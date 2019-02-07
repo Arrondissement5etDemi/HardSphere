@@ -131,7 +131,6 @@ public class Box {
 
 	/**moves a random particle in partiArr in a random direction by a random distance between 0 and maxDist
  *	@param maxDist double, the maximum distance to move for a movement in each dimension */
-	
 	public void move(double maxDist) {
 		//randomly choose a particle to move
 		int ind = 0;
