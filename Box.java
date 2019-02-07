@@ -24,10 +24,10 @@ public class Box {
 			double z = getRandomNumberInRange(0,d);
 			Particle p = new Particle(x,y,z,diam);	
 			//check if the particle p collides with already generated particles
-			if (collisionChecker(p,i)==0) {	
+			//if (collisionChecker(p,i)==0) {	
 				partiArr[i] = p;
 				i++;
-			}
+			//}
 			//else {
 			//	System.out.println(collisionChecker(p,i));
 			//}
@@ -66,6 +66,12 @@ public class Box {
                 return n;
         }
 
+	/**get diam, the diameter of the particles
+ * 	@return double */
+	public double getDiam() {
+		return diam;
+	}
+
 	/**computes the total number of collisions of all particles in the box
  * 	@return int, the number of collisions */
 	public int totalCollision() {
@@ -90,48 +96,66 @@ public class Box {
 
 	/**checks how many times a particle collides with any of the first m particles in partiArr
  * 	@param thisParti Particle, the particle we are checking
- * 	@param k int, we are checking collisions with the first m particles in partiArr
+ * 	@param m int, we are checking collisions with the first m particles in partiArr
  * 	@return int, the number of collisions */
 	public int collisionChecker(Particle thisParti, int m) {
 		//for every of the first k particles in the box, compute their collision to ThisParti
 		int collisions = 0;
+		double diam = thisParti.getDiam();
                 for (int i = 0; i < m ; i++) {
                         Particle thatParti = partiArr[i];
-                        double thatX = thatParti.getx();
-                        double thatY = thatParti.gety();
-                        double thatZ = thatParti.getz();
-			double thatDiam = thatParti.getDiam();
-			//scan through the relavant cells...
-			for (int j = -bound; j <= bound; j++) {
-			          for (int k = -bound; k <= bound; k++) {
-					for (int l = -bound; l <= bound; l++) {
-						//duplicate thatParti in the scanned cell
-						Particle dupliOfThat = new Particle(thatX + j*d, thatY + k*d, thatZ + l*d,thatDiam);
-						if (thisParti.collide(dupliOfThat)) {
-							collisions++;
-						}
-					}
-				}
+			if (minDist(thisParti,thatParti) < diam) {
+				collisions ++;
 			}
 		}
 		return collisions;
 	}
 
+	/**the minimum distance between two particles in PBC
+ * 	@param thisP Particle
+ * 	@param another Particle, another particle 
+ * 	@return the minimum distance to that particle among all its replicates */
+	public double minDist(Particle thisP, Particle another) {
+                double thatX = another.getx();
+                double thatY = another.gety();
+                double thatZ = another.getz();
+                double miniDx = minIn3(thatX,thatX+d,thatX-d,thisP.getx());
+                double miniDy = minIn3(thatY,thatY+d,thatY-d,thisP.gety());
+                double miniDz = minIn3(thatZ,thatZ+d,thatZ-d,thisP.getz());
+                return Math.sqrt(miniDx*miniDx + miniDy*miniDy + miniDz*miniDz);
+        }
+
+	public static double minIn3(double a, double b, double c, double center) {
+		return Math.min(Math.abs(a-center),Math.min(Math.abs(b-center),Math.abs(c-center)));
+	}
+
 	/**moves a random particle in partiArr in a random direction by a random distance between 0 and maxDist
- *	@param maxDist double, the maximum distance to move for a movement in each dimension 
- *	@return Movement, the Movement that occured */
+ *	@param maxDist double, the maximum distance to move for a movement in each dimension */
 	
-	public Movement move(double maxDist) {
+	public void move(double maxDist) {
 		//randomly choose a particle to move
-		int ind = (int) Math.floor(getRandomNumberInRange(0.0,(double)n));
-		Particle thisParti = partiArr[ind];
+		int ind = 0;
+		Particle thisParti = partiArr[0];
 		//randomly choose distances to move in x, y, z respectively
-		double distX = getRandomNumberInRange(0,maxDist);
-		double distY = getRandomNumberInRange(0,maxDist);
-		double distZ = getRandomNumberInRange(0,maxDist);
-		Movement m = new Movement(thisParti, distX, distY, distZ);
-		move(m);
-		return m;
+		boolean hasCollision = true;
+		double distX = 0;
+		double distY = 0;
+		double distZ = 0;
+		while (hasCollision) {
+			ind = (int) Math.floor(getRandomNumberInRange(0.0,(double)n));
+			thisParti = partiArr[ind];
+			distX = getRandomNumberInRange(-maxDist,maxDist);
+			distY = getRandomNumberInRange(-maxDist,maxDist);
+			distZ = getRandomNumberInRange(-maxDist,maxDist);
+			Movement m = new Movement(thisParti, distX, distY, distZ);
+			move(m);
+			if (partiCollision(ind) <= 1) {
+				hasCollision = false;
+			}
+			else {
+				move(m.reverse());
+			}
+		}
 	}
 
 	/**moves a Particle with a Movement

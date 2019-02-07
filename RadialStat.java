@@ -19,29 +19,17 @@ public class RadialStat {
 		double diam = b.getDiam();
 		//get the range of unit cells that we consider counting
 		double upperRadReal = diam * upperRad;
-		int bound = (int) Math.ceil(upperRadReal / d);
 		//get the number of bins needed for g2 plot
 		int numBins = (int) (numBinsPerDiam * upperRad);
 		double[] result = new double[numBins];
 		//consider all particles in all the cells considered, see if they are in the shell
 		for (int i = 0; i < n; i++) {
 			Particle thatParti = partiArr[i];
-			double thatX = thatParti.getx();
-			double thatY = thatParti.gety();
-			double thatZ = thatParti.getz();
-			for (int j = -bound; j <= bound; j++) {
-			for (int k = -bound; k <= bound; k++) {
-			for (int l = -bound; l <= bound; l++) {
-				Particle dupli = new Particle(thatX + j*d, thatY + k*d, thatZ + l*d, diam);
-				double distToDupli = center.distanceto(dupli);
-				double distScaled = distToDupli/diam;//distance in multiples of diam
-				int binToEnter = (int)Math.floor(distScaled * numBinsPerDiam);	
-					if (binToEnter < numBins) {
-						result[binToEnter]++;
-					} 
-			}
-			}
-			}
+			double distScaled = b.minDist(center,thatParti)/diam;
+			if (distScaled < upperRad && distScaled != 0) {
+				int binToEnter = (int)Math.floor(distScaled * (double)numBinsPerDiam);
+				result[binToEnter]++;
+			} 
 		}
 		return result;
 	}
@@ -70,13 +58,15 @@ public class RadialStat {
                 }
 
 		double[][] result = new double[numBins][2];
-		double thickness = (1.0/(int)numBinsPerDiam)*diam;
 		for (int i = 0; i < numBins; i++) {
 			result[i][0] = (i + 0.5) * (1.0/(double)numBinsPerDiam);
-			double r = result[i][0]*diam;
-			double shellVolume = 4*pi*r*r*thickness;
+			double leftR = i * (1.0/(double)numBinsPerDiam)*diam;
+			double rightR = (i+1) * (1.0/(double)numBinsPerDiam)*diam;
+			double shellVolume = 4.0/3.0*pi*(Math.pow(rightR,3.0)-Math.pow(leftR,3.0));
 			result[i][1] = binningResult[i]/((double)n*rho*shellVolume);
 		}
 		return result;
 	}
+
+}
 	
